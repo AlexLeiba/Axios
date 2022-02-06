@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "../components/input/Input";
 import { Button } from "../components/button/Button";
 import { api } from "../api/IndexApi";
@@ -7,6 +7,23 @@ import { registrationSchema } from "../components/Validation/RegistrationSchema"
 
 export function Registration() {
   const navigator = useNavigate();
+  const [stateUsers, setUsers] = useState();
+
+  //   Api get
+  useEffect(() => {
+    async function GetUsers() {
+      try {
+        const { data } = await api().requestApi().listUsers();
+        setUsers(data[0].email);
+      } catch (error) {
+        console.log(`${error}`);
+      }
+      console.log("undefined bro");
+    }
+    GetUsers();
+  }, []);
+
+  console.log(stateUsers);
 
   // States
   const [formValue, setForm] = useState({
@@ -58,13 +75,15 @@ export function Registration() {
       return;
     }
     // daca ambele validari au valoarea true, va merge mai departe, daca nu
-// va iesi din functie
+    // va iesi din functie
 
-    // Call api
-    const { status } = await api().requestApi().registration(formValue);
-
-    if (status === 200) {
+    // Call api, cu catch care va prinde eroarile!
+    try {
+      await api().requestApi().registration(formValue);
+      //   numai daca requestul este de status 200  va executa functia (navigator!)
       navigator("/login");
+    } catch (error) {
+      console.log(`${error}`);
     }
   }
 

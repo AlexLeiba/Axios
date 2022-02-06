@@ -30,4 +30,13 @@ export const requestApi = () => ({
     });
     return data;
   },
+
+  listUsers: async () => {
+    const { data } = await Instance({
+      url: "/uses?/page=2",
+      method: "GET",
+    });
+
+    return data;
+  },
 });
